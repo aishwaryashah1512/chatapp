@@ -6,7 +6,6 @@ const Filter=require('bad-words')
 const {generatemessage}=require('./utils/messages')
 const {adduser,removeuser,getUser,getUsersInRoom}=require('./utils/users')
 
-
 const app = express()
 const server=http.createServer(app)
 const io=socketio(server)
