@@ -1,15 +1,17 @@
-const socket=io()
 
 const $messageform=document.querySelector('#msgform')
-const $msgbutton=$messageform.querySelector('button')
+const $msgbutton=document.querySelector('#send')
 const $msginput=$messageform.querySelector('input')
 const $locationbutton=document.querySelector('#location')
 const $messages=document.querySelector('#messages')
 const $messagetemplates=document.querySelector('#message-template').innerHTML
 const $locationmessagetemplate=document.querySelector('#location-message-template').innerHTML
 
+const $navtemplate=document.querySelector('#nav-template').innerHTML
+
 const $sidebartemplate=document.querySelector("#sidebar-template").innerHTML
 
+console.log($msgbutton)
 
 const {username,room}=Qs.parse(location.search,{ignoreQueryPrefix:true})
 
@@ -58,8 +60,11 @@ socket.on('locationmessage',(url)=>{
 })
 
 socket.on('roomData',({room,users})=>{
- const html=Mustache.render($sidebartemplate,{room,users})
- document.querySelector("#sidebar").innerHTML=html
+ const userlist=Mustache.render($sidebartemplate,{users}) 
+ const rooom =Mustache.render($navtemplate,{roomno:room})
+
+ document.querySelector("#sidebar").innerHTML=userlist
+ document.querySelector('#noofroom').innerHTML=rooom
 })
 
 document.querySelector('#location').addEventListener('click',()=>{
@@ -78,13 +83,16 @@ document.querySelector('#location').addEventListener('click',()=>{
     }
 })
 
-document.querySelector('#msgform').addEventListener('submit',(event)=>{
+$msgbutton.addEventListener('click',(event)=>{
     event.preventDefault()
-    const inputvalue=event.target.elements.message.value   //tareget here means the form and message is the name prop of input
+    const inputvalue=$msginput.value 
+      //tareget here means the form and message is the name prop of input
     $msgbutton.setAttribute('disabled','disabled')                                                          //const inputvalue=document.querySelector('input').value
     socket.emit('sendmessage',inputvalue,(error)=>{
         $msgbutton.removeAttribute('disabled')
+        console.log( $msginput.value)
         $msginput.value=''
+        
         $msginput.focus()
         if(error){
             console.log(error)
@@ -95,5 +103,8 @@ document.querySelector('#msgform').addEventListener('submit',(event)=>{
     })
     
 })
+
+
+
 
 
